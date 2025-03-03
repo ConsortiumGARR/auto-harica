@@ -1,2 +1,2 @@
-pre-commit
-commitizen
+pre-commit==4.1.0
+commitizen==4.4.1

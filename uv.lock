@@ -26,8 +26,8 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "commitizen", specifier = ">=4.4.1" },
-    { name = "pre-commit", specifier = ">=4.1.0" },
+    { name = "commitizen", specifier = "==4.4.1" },
+    { name = "pre-commit", specifier = "==4.1.0" },
 ]
 
 [[package]]

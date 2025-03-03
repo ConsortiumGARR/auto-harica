@@ -12,4 +12,4 @@ repos:
   - hooks:
       - id: commitizen
     repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.2.0
+    rev: v4.4.1
