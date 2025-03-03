@@ -63,6 +63,19 @@ build_docker_image:
         - \*.sh
     - if: $CI_COMMIT_TAG
 
+release:
+  stage: publish
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  script:
+    - echo "Running the release job for $CI_COMMIT_TAG."
+    - "awk '/^## Unreleased/ { next } ; /^## / { r++ ; if ( r <2) { print ; next } else { exit } }; /^/ { print } ;' < CHANGELOG.md >INCREMENTAL_CHANGELOG.md"
+  release:
+    tag_name: "$CI_COMMIT_TAG"
+    name: "Release $CI_COMMIT_TAG"
+    description: INCREMENTAL_CHANGELOG.md
+  rules:
+    - if: $CI_COMMIT_TAG
+
 do_nothing:
   stage: mr-wa
   script: echo "Dummy job for merge-request. For info check https://stackoverflow.com/a/73333320"
