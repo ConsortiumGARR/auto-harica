@@ -26,7 +26,7 @@ To use the Docker image, you need:
 - Familiarity with [certbot-sectigo](docker/certbot-sectigo)
   if you intend to use ``auto-harica`` as a replacement
 
-## Variabili d'ambiente
+## Environment Variables
 
 |          env variable          |                                             description                                             |      default value      |
 | ------------------------------ | --------------------------------------------------------------------------------------------------- | ----------------------- |
@@ -59,6 +59,31 @@ are possible (container restart, permission changes, etc.).
   ``HARICA_OUTPUT_FOLDER`` to the following path:
   ``HARICA_OUTPUT_FOLDER=/app/certbot/certs/archive/\<domain\>``
 
+## Example of cert generation
+
+Generating certificates is simple as using this docker-compose.
+
+```yaml
+services:
+  auto-harica:
+    container_name: harica
+    image: auto-harica:test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # user: root
+    restart: unless-stopped
+    environment:
+      - DOMAIN=testah.garr.it
+      - ANS=testah-an1.garr.it,testah-an2.garr.it
+      - HARICA_USERNAME=<your_email>
+      - HARICA_PASSWORD=<your_password>
+      - HARICA_TOTP_SEED=<your_totp_seed>
+      - HARICA_OUTPUT_FOLDER=/app/certificates/testah.garr.it
+    volumes:
+      - ./certificates:/app/certificates
+```
+
 ## Example of replacing Sectigo with Harica
 
 ### Before
@@ -71,7 +96,7 @@ are possible (container restart, permission changes, etc.).
     env_file:
       - .env.certbot
     environment:
-      - DOMAINS={{ satosa_certbot_fqdn_aliases|join(',') }}
+      - DOMAINS={{ satosa_certbot_fqdn_aliases | join(',') }}
     healthcheck:
       test: find /etc/letsencrypt/live/{{ satosa_certbot_fqdn_aliases | first }}/fullchain.pem
       interval: 10s
@@ -115,4 +140,82 @@ CERT_DIR="/app/certbot/certs"
     volumes:
       - {{ ansible_env.HOME }}/certbot:/app/certbot:rw
       - {{ ansible_env.HOME }}/certbot/hooks/chmod_hook.sh:/app/hooks/chmod_hook.sh:rw
+```
+
+### Directory tree that clarifies mounting points
+
+On host:
+
+```bash
+certbot
+├── certs
+│   ├── accounts
+│   │   └── acme.sectigo.com
+│   ├── archive
+│   │   └── ds-test.garr.it
+│   │       ├── cert1740425410.pem
+│   │       ├── cert3.pem
+│   │       ├── chain3.pem
+│   │       ├── fullchain1740425410.pem
+│   │       ├── fullchain3.pem
+│   │       ├── harica.log
+│   │       ├── privkey1740425410.pem
+│   │       ├── privkey3.pem
+│   │       ├── ds-test.garr.it.csr
+│   │       ├── ds-test.garr.it.csr.id
+│   │       ├── ds-test.garr.it.key
+│   ├── csr
+│   ├── keys
+│   ├── live
+│   │   └── ds-test.garr.it
+│   │       ├── cert.pem -> ../../archive/ds-test.garr.it/cert1740425410.pem
+│   │       ├── chain.pem -> ../../archive/ds-test.garr.it/chain3.pem
+│   │       ├── fullchain.pem -> ../../archive/ds-test.garr.it/fullchain1740425410.pem
+│   │       ├── privkey.pem -> ../../archive/ds-test.garr.it/privkey1740425410.pem
+│   │       └── README
+│   ├── renewal
+│   └── renewal-hooks
+└── hooks
+```
+
+Inside docker container (check also `HARICA_OUTPUT_FOLDER` var)
+
+```bash
+/app
+|-- certbot
+|   |-- certs
+|   |   |-- accounts
+|   |   |   `-- acme.sectigo.com
+|   |   |-- archive
+|   |   |   `-- ds-test.garr.it
+|   |   |       |-- cert1740425410.pem
+|   |   |       |-- cert3.pem
+|   |   |       |-- chain3.pem
+|   |   |       |-- fullchain1740425410.pem
+|   |   |       |-- fullchain3.pem
+|   |   |       |-- harica.log
+|   |   |       |-- privkey1740425410.pem
+|   |   |       |-- privkey3.pem
+|   |   |       |-- ds-test.garr.it.csr
+|   |   |       |-- ds-test.garr.it.csr.id
+|   |   |       `-- ds-test.garr.it.key
+|   |   |-- csr
+|   |   |-- keys
+|   |   |-- live
+|   |   |   `-- ds-test.garr.it
+|   |   |       |-- README
+|   |   |       |-- cert.pem -> ../../archive/ds-test.garr.it/cert1740425410.pem
+|   |   |       |-- chain.pem -> ../../archive/ds-test.garr.it/chain3.pem
+|   |   |       |-- fullchain.pem -> ../../archive/ds-test.garr.it/fullchain1740425410.pem
+|   |   |       `-- privkey.pem -> ../../archive/ds-test.garr.it/privkey1740425410.pem
+|   |   |-- renewal
+|   |   `-- renewal-hooks
+|   `-- hooks
+|-- env.sh
+|-- harica.sh
+|-- hooks
+|   `-- chmod_hook.sh
+|-- init.sh
+|-- sectigo.sh
+`-- utils.sh
 ```
