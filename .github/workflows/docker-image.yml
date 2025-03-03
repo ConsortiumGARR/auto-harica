@@ -37,12 +37,17 @@ jobs:
         with:
           string: ${{ github.repository }}
 
+      - name: Get harica-cli version
+        run: |
+          export HARICA_CLI_VER=$(grep 'ARG TCS_VERSION=' Dockerfile | cut -d '=' -f2)
+          echo "HARICA_CLI_VER=$HARICA_CLI_VER" >> $GITHUB_ENV
+
       - name: Build and push latest
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:latest
+          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:${{ env.HARICA_CLI_VER }}-latest
 
       - name: Build and push version only on tag creation
         if: github.event_name != 'workflow_dispatch'
@@ -50,4 +55,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:${{ github.ref_name }}
+          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:${{ env.HARICA_CLI_VER }}-${{ github.ref_name }}

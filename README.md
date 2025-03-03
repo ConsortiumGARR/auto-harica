@@ -26,6 +26,28 @@ To use the Docker image, you need:
 - Familiarity with [certbot-sectigo](docker/certbot-sectigo)
   if you intend to use ``auto-harica`` as a replacement
 
+## Docker
+
+Docker image is available at GitHub container [registry](https://github.com/ConsortiumGARR/auto-harica/pkgs/container/auto-harica).
+You can pull them via:
+
+```bash
+docker pull ghcr.io/consortiumgarr/auto-harica:<your_desired_version>
+```
+
+## Image tags
+
+- X.Y.Z-a.b.c: release containing X.Y.Z version of
+  [tcs-garr](https://pypi.org/project/tcs-garr/) and a.b.c version of auto-harica.
+
+### Build
+
+Example of docker image build command:
+
+```bash
+docker build -t auto-harica:latest .
+```
+
 ## Environment Variables
 
 |          env variable          |                                             description                                             |      default value      |

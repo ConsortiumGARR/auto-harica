@@ -25,24 +25,25 @@ build_docker_image:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - export TAG=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
+    - export HARICA_CLI_VER=$(grep 'ARG TCS_VERSION=' Dockerfile | cut -d '=' -f2)
   script:
     # Only build when merging request
-    - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
-    - docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest -f ./Dockerfile .
+    - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest"
+    - docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest -f ./Dockerfile .
 
     # Build and push latest tag on main branch
     - |
       if [[ "$CI_COMMIT_REF_NAME" == "main" ]]; then
-        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest
-        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
+        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest
+        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest"
       fi
 
     # Build and push on tag creation
     - |
       if [[ "$CI_COMMIT_TAG" != "" ]]; then
         docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$TAG -f ./Dockerfile .
-        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$TAG
-        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$TAG"
+        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG
+        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG"
       fi
   rules:
     - if: $CI_COMMIT_REF_NAME == "main"
