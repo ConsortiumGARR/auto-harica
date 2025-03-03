@@ -1,0 +1,30 @@
+name: Create release
+
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract changelog for tag
+        run: |
+          TAG="${{ github.ref_name }}"
+          awk -v tag="## $TAG" '
+          BEGIN { found=0 }
+          $0 ~ tag { found=1; print; next }
+          found && /^## / { exit }
+          found { print }
+          ' CHANGELOG.md > extracted_changelog.txt
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: extracted_changelog.txt
+          generate_release_notes: true
+          files: dist/*
