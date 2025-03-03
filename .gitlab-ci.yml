@@ -31,7 +31,7 @@ build_docker_image:
     - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest"
     - docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest -f ./Dockerfile .
     - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
-    - docker build --arg TCS_VERSION=latest --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest -f ./Dockerfile .
+    - docker build --build-arg TCS_VERSION=latest --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest -f ./Dockerfile .
 
     # Build and push latest tag on main branch
     - |
