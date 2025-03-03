@@ -1,0 +1,53 @@
+stages:
+  - publish
+  - mr-wa
+
+build_docker_image:
+  stage: publish
+  image: harbor.infra.garr.it/cache/library/docker
+  services:
+    - name: harbor.infra.garr.it/cache/library/docker:dind
+      alias: docker
+  variables:
+    CONTAINER_IMAGE_PATH: $CI_REGISTRY/$CI_PROJECT_PATH
+    IMAGE_NAME: auto-harica
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - export TAG=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
+  script:
+    # Only build when merging request
+    - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
+    - docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest -f ./Dockerfile .
+
+    # Build and push latest tag on main branch
+    - |
+      if [[ "$CI_COMMIT_REF_NAME" == "main" ]]; then
+        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest
+        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
+      fi
+
+    # Build and push on tag creation
+    - |
+      if [[ "$CI_COMMIT_TAG" != "" ]]; then
+        docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$TAG -f ./Dockerfile .
+        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$TAG
+        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$TAG"
+      fi
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "main"
+      changes:
+        - Dockerfile
+        - hooks/*
+        - *.sh
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - Dockerfile
+        - hooks/*
+        - *.sh
+    - if: $CI_COMMIT_TAG
+
+do_nothing:
+  stage: mr-wa
+  script: echo "Dummy job for merge-request. For info check https://stackoverflow.com/a/73333320"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
