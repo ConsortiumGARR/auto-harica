@@ -1,0 +1,17 @@
+[project]
+name = "auto-harica"
+version = "0.1.0"
+description = "Automated SSL/TLS certificate issuance and renewal for Harica using Docker."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = ["commitizen>=4.4.1", "pre-commit>=4.1.0"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version_scheme = "semver2"
+version_provider = "pep621"
+update_changelog_on_bump = true

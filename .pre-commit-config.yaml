@@ -1,0 +1,15 @@
+---
+repos:
+  - hooks:
+      - args:
+          - --maxkb=500
+        id: check-added-large-files
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+    repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+  - hooks:
+      - id: commitizen
+    repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.2.0
