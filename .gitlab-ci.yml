@@ -30,12 +30,17 @@ build_docker_image:
     # Only build when merging request
     - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest"
     - docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest -f ./Dockerfile .
+    - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
+    - docker build --arg TCS_VERSION=latest --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest -f ./Dockerfile .
 
     # Build and push latest tag on main branch
     - |
       if [[ "$CI_COMMIT_REF_NAME" == "main" ]]; then
         docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest
         echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest"
+
+        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest
+        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
       fi
 
     # Build and push on tag creation

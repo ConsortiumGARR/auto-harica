@@ -39,6 +39,7 @@ docker pull ghcr.io/consortiumgarr/auto-harica:<your_desired_version>
 
 - X.Y.Z-a.b.c: release containing X.Y.Z version of
   [tcs-garr](https://pypi.org/project/tcs-garr/) and a.b.c version of auto-harica.
+- latest: latest is latest for both tcs-garr and auto-harica
 
 ### Build
 
