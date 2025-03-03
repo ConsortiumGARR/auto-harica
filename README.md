@@ -1,5 +1,11 @@
 # auto-harica
 
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+![Contributions welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg)
+![GitHub License](https://img.shields.io/github/license/ConsortiumGARR/auto-harica)
+![GitHub Release](https://img.shields.io/github/v/release/ConsortiumGARR/auto-harica)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ConsortiumGARR/auto-harica/docker-image.yml)
+
 ``auto-harica`` is a Docker image designed to automate the issuance and renewal of
 SSL/TLS certificates from [Harica](https://cm.harica.gr) using
 [tcs-garr](https://pypi.org/project/tcs-garr/). It serves as a temporary solution to
