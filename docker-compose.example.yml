@@ -1,0 +1,24 @@
+---
+# docker compose up -d --build --force-recreate
+services:
+  auto-harica:
+    container_name: harica
+    image: auto-harica:test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # user: root
+    restart: unless-stopped
+    environment:
+      - SECTIGO_BACKWARD_COMPATIBILITY=true
+      - DOMAIN=testah.garr.it
+      - ANS=testah-an1.garr.it,testah-an2.garr.it
+      - USE_EXISTING_CSR=true
+      - FORCE_RENEWAL=false
+      - CHECK_FREQ=12
+      - HARICA_USERNAME=<your_email>
+      - HARICA_PASSWORD=<your_password>
+      - HARICA_TOTP_SEED=<your_totp_seed>
+      - HARICA_OUTPUT_FOLDER=/app/certificates/testah.garr.it
+    volumes:
+      - ./certificates:/app/certificates

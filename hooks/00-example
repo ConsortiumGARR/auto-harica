@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Possible actions: error, pre-request, post-request
+ACTION="${1}"
+
+case "${ACTION}" in
+"error")
+    echo "error-echo"
+    ;;
+
+"pre-request")
+    echo "pre-request-echo"
+    ;;
+
+"post-request")
+    echo "post-request-echo"
+    ;;
+esac

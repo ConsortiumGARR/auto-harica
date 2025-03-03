@@ -1,0 +1,4 @@
+.env
+certbot
+docker-compose.yml
+*.zip
