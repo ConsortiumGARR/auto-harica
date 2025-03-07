@@ -77,8 +77,8 @@ generate_and_download_certificate() {
 
     echo "Waiting for approval of certificate request..."
 
-    until tcs-garr $ENV_OPTS download --id $CERT_ID --output-filename $FULLCHAIN_FILENAME --force 2>/dev/null; do
-        echo ...
+    until tcs-garr $ENV_OPTS download --id $CERT_ID --output-filename $FULLCHAIN_FILENAME --force 2>/dev/null | grep -q "has not been approved yet"; do
+        echo "Waiting for certificate approval..."
         sleep 10
     done
 
