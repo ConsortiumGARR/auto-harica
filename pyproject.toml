@@ -1,6 +1,6 @@
 [project]
 name = "auto-harica"
-version = "1.0.1"
+version = "1.0.2"
 description = "Automated SSL/TLS certificate issuance and renewal for Harica using Docker."
 readme = "README.md"
 requires-python = ">=3.13"
