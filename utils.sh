@@ -75,11 +75,21 @@ generate_and_download_certificate() {
     FULLCHAIN_FILENAME=$1
     CERT_FILENAME=$2
 
-    echo "Waiting for approval of certificate request..."
+    echo -e "Waiting for approval of certificate request...\n"
 
-    until tcs-garr $ENV_OPTS download --id $CERT_ID --output-filename $FULLCHAIN_FILENAME --force 2>/dev/null | grep -q "has not been approved yet"; do
-        echo "Waiting for certificate approval..."
-        sleep 10
+    while true; do
+        OUTPUT=$(tcs-garr $ENV_OPTS download --id $CERT_ID --output-filename $FULLCHAIN_FILENAME --force 2>&1)
+
+        if echo "$OUTPUT" | grep -q "has not been approved yet"; then
+            echo "Waiting for certificate approval..."
+            sleep 10
+        elif echo "$OUTPUT" | grep -q "Certificate saved to"; then
+            # Certificate downloaded. Exit.
+            break
+        else
+            echo "Unexpected error: $OUTPUT" >&2
+            exit 1
+        fi
     done
 
     tcs-garr $ENV_OPTS download --id $CERT_ID --output-filename $CERT_FILENAME --force --download-type certificate
