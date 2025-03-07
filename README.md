@@ -57,20 +57,20 @@ docker build -t auto-harica:latest .
 
 ## Environment Variables
 
-|          env variable          |                                             description                                             |      default value      |
-| ------------------------------ | --------------------------------------------------------------------------------------------------- | ----------------------- |
-| DOMAIN                         | Common name of the certificate                                                                      |                         |
-| ANS                            | Alternative names for the certificate (comma-separated)                                             | stringa vuota           |
-| CERT_TYPE                      | Type of certificate. Choose between DV (Domain Validation) or OV (Organization Validation)          | OV                      |
-| HARICA_USERNAME                | Harica account email                                                                                |                         |
-| HARICA_PASSWORD                | Harica account password                                                                             |                         |
-| HARICA_TOTP_SEED               | TOTP seed used for 2FA                                                                              |                         |
-| HARICA_OUTPUT_FOLDER           | Destination folder for generated certificates                                                       | /app/harica_cerificates |
-| ENVIRONMENT                    | Specify which Harica environment to use (production or stg)                                         | production              |
-| SECTIGO_BACKWARD_COMPATIBILITY | Searches for expiring certificates belonging to $DOMAIN in the volume previously created by Sectigo | false                   |
-| USE_EXISTING_CSR               | Uses an existing CSR (not applicable to Sectigo)                                                    | false                   |
-| FORCE_RENEWAL                  | Forces renewal before 30 days                                                                       | false                   |
-| CHECK_FREQ                     | Certificate expiration check frequency (in hours)                                                   | 12                      |
+|          env variable          |                                                                                description                                                                                |      default value      |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| DOMAIN                         | Common name of the certificate                                                                                                                                            |                         |
+| ANS                            | Alternative names for the certificate (comma-separated)                                                                                                                   | stringa vuota           |
+| CERT_TYPE                      | Type of certificate. Choose between DV (Domain Validation) or OV (Organization Validation)                                                                                | OV                      |
+| HARICA_USERNAME                | Harica account email                                                                                                                                                      |                         |
+| HARICA_PASSWORD                | Harica account password                                                                                                                                                   |                         |
+| HARICA_TOTP_SEED               | TOTP seed used for 2FA                                                                                                                                                    |                         |
+| HARICA_OUTPUT_FOLDER           | Destination folder for generated certificates                                                                                                                             | /app/harica_cerificates |
+| ENVIRONMENT                    | Specify which Harica environment to use (production or stg)                                                                                                               | production              |
+| SECTIGO_BACKWARD_COMPATIBILITY | Searches for expiring certificates belonging to $DOMAIN in the volume previously created by Sectigo                                                                       | false                   |
+| USE_EXISTING_CSR               | Uses an existing CSR (not applicable to Sectigo)                                                                                                                          | false                   |
+| FORCE_RENEWAL                  | Forces renewal before 30 days. It will create a file named `renewal_forced` under HARICA_OUTPUT_FOLDER. If you want to reforce renewal again, you must delete file first. | false                   |
+| CHECK_FREQ                     | Certificate expiration check frequency (in hours)                                                                                                                         | 12                      |
 
 ## Hooks
 
