@@ -87,27 +87,10 @@ update_tcs_version:
     - export TAG=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
     - export HARICA_CLI_VER=$(grep 'ARG TCS_VERSION=' Dockerfile | cut -d '=' -f2)
   script:
-    # Only build when merging request
-    # Build HARICA_CLI_VER-latest
-    - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest"
-    - docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest -f ./Dockerfile .
-    # Build latest for all
-    - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
-    - docker build --build-arg TCS_VERSION=latest --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest -f ./Dockerfile .
-
     # Build and push latest tag on main branch and update HARICA_CLI_VER with current auto-harica version
-    - |
-      if [[ "$CI_COMMIT_REF_NAME" == "main" ]]; then
-        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest
-        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest"
-
-        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest
-        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
-
-        docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG -f ./Dockerfile .
-        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG
-        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG"
-      fi
+    - docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG -f ./Dockerfile .
+    - docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG
+    - echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG"
   rules:
     - if: $CI_COMMIT_REF_NAME == "main"
       changes:
