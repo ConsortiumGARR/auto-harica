@@ -73,6 +73,46 @@ build_docker_image:
         - utils.sh
     - if: $CI_COMMIT_TAG
 
+update_tcs_version:
+  stage: publish
+  image: harbor.infra.garr.it/cache/library/docker
+  services:
+    - name: harbor.infra.garr.it/cache/library/docker:dind
+      alias: docker
+  variables:
+    CONTAINER_IMAGE_PATH: $CI_REGISTRY/$CI_PROJECT_PATH
+    IMAGE_NAME: auto-harica
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - export TAG=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
+    - export HARICA_CLI_VER=$(grep 'ARG TCS_VERSION=' Dockerfile | cut -d '=' -f2)
+  script:
+    # Only build when merging request
+    # Build HARICA_CLI_VER-latest
+    - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest"
+    - docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest -f ./Dockerfile .
+    # Build latest for all
+    - echo "Building $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
+    - docker build --build-arg TCS_VERSION=latest --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest -f ./Dockerfile .
+
+    # Build and push latest tag on main branch and update HARICA_CLI_VER with current auto-harica version
+    - |
+      if [[ "$CI_COMMIT_REF_NAME" == "main" ]]; then
+        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest
+        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-latest"
+
+        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest
+        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:latest"
+
+        docker build --tag $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG -f ./Dockerfile .
+        docker push $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG
+        echo "Pushed $CONTAINER_IMAGE_PATH/$IMAGE_NAME:$HARICA_CLI_VER-$TAG"
+      fi
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "main"
+      changes:
+        - Dockerfile
+
 release:
   stage: publish
   image: registry.gitlab.com/gitlab-org/release-cli:latest

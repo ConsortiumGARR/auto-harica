@@ -1,4 +1,4 @@
-ARG TCS_VERSION=0.16.23
+ARG TCS_VERSION=0.16.24
 FROM ghcr.io/consortiumgarr/tcs-garr:${TCS_VERSION}
 
 ARG USER=tcs
