@@ -26,7 +26,7 @@ your own discretion.**
 
 To use the Docker image, you need:
 
-- An administrative account on <https://cm.harica.gr> for your organization
+- Read [prerequisites](https://github.com/ConsortiumGARR/tcs-garr/blob/main/README.md#prerequisites)
 - Knowledge of and familiarity with the
   [harica-cli README](https://github.com/ConsortiumGARR/tcs-garr/blob/main/README.md)
 - Familiarity with [certbot-sectigo](docker/certbot-sectigo)
@@ -65,6 +65,8 @@ docker build -t auto-harica:latest .
 | HARICA_USERNAME                | Harica account email                                                                                                                                                      |                         |
 | HARICA_PASSWORD                | Harica account password                                                                                                                                                   |                         |
 | HARICA_TOTP_SEED               | TOTP seed used for 2FA                                                                                                                                                    |                         |
+| HARICA_HTTP_PROXY              | HTTP Proxy (e.g. use when you don't have direct internet access)                                                                                                          | None                    |
+| HARICA_HTTPS_PROXY             | HTTPS Proxy (e.g. use when you don't have direct internet access)                                                                                                         | None                    |
 | HARICA_OUTPUT_FOLDER           | Destination folder for generated certificates                                                                                                                             | /app/harica_cerificates |
 | ENVIRONMENT                    | Specify which Harica environment to use (production or stg)                                                                                                               | production              |
 | SECTIGO_BACKWARD_COMPATIBILITY | Searches for expiring certificates belonging to $DOMAIN in the volume previously created by Sectigo                                                                       | false                   |

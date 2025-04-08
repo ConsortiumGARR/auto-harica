@@ -17,11 +17,6 @@ if [ -z "$HARICA_PASSWORD" ]; then
     exit 1
 fi
 
-if [ -z "$HARICA_TOTP_SEED" ]; then
-    echo "No totp set, please fill -e 'HARICA_TOTP_SEED=otpauth://totp/HARICA.....'"
-    exit 1
-fi
-
 if [ "$ENVIRONMENT" != "production" ] && [ "$ENVIRONMENT" != "stg" ]; then
     echo "No valid environment set, please fill -e 'ENVIRONMENT=production' or -e 'ENVIRONMENT=stg'"
     exit 1
