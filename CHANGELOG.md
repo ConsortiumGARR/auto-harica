@@ -1,3 +1,14 @@
+## 2.0.0 (2025-04-17)
+
+### Feat
+
+- update to 0.21.2
+- update to 0.21.1
+
+### Fix
+
+- renewal was not finding correct pem
+
 ## 1.0.4 (2025-04-08)
 
 ### Feat
