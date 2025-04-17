@@ -3,3 +3,4 @@ certbot
 docker-compose.yml
 *.zip
 .venv
+certificates
