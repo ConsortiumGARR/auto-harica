@@ -1,0 +1,66 @@
+name: Build auto-harica when new tcs-garr version is released
+
+on:
+  repository_dispatch:
+    types: [trigger-workflow]
+
+jobs:
+  build-missing:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Packages
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Lower case docker image name
+        id: docker_image
+        uses: ASzc/change-string-case-action@v6
+        with:
+          string: ${{ github.repository }}
+
+      - name: Get auto-harica version
+        run: |
+          export TAG=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Build and push latest
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          build-args: TCS_VERSION=latest
+          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:latest
+
+      - name: Build and push tcs-garr version and auto-harica latest
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:$tcs_tag-latest
+
+      - name: Build and push HARICA_CLI_VER with current auto-harica version
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:$tcs_tag-${{ env.TAG }}
