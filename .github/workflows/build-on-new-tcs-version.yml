@@ -7,6 +7,8 @@ on:
 jobs:
   build-missing:
     runs-on: ubuntu-latest
+    env:
+      tcs_tag: ${{ github.event.client_payload.tcs_tag }}
 
     permissions:
       contents: read
@@ -55,7 +57,7 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:$tcs_tag-latest
+          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:${{ env.tcs_tag }}-latest
 
       - name: Build and push HARICA_CLI_VER with current auto-harica version
         uses: docker/build-push-action@v6
@@ -63,4 +65,4 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:$tcs_tag-${{ env.TAG }}
+          tags: ghcr.io/${{ steps.docker_image.outputs.lowercase }}:${{ env.tcs_tag }}-${{ env.TAG }}
