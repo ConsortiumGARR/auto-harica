@@ -74,6 +74,11 @@ docker build -t auto-harica:latest .
 | FORCE_RENEWAL                  | Forces renewal before 30 days. It will create a file named `renewal_forced` under HARICA_OUTPUT_FOLDER. If you want to reforce renewal again, you must delete file first. | false                   |
 | CHECK_FREQ                     | Certificate expiration check frequency (in hours)                                                                                                                         | 12                      |
 | WEBHOOK_URL                    | Webhook URL                                                                                                                                                               |                         |
+| WEBHOOK_TYPE                   | Webhook Type                                                                                                                                                              | Slack                   |
+
+Info about
+[webhook](https://github.com/ConsortiumGARR/tcs-garr?tab=readme-ov-file#webhook)
+environment variable.
 
 ## Hooks
 
